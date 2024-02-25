@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { Button, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import React from 'react';
-import { Stack, Tabs } from 'expo-router';
+import { Stack, Tabs, useNavigation, useRouter } from 'expo-router';
 import { Heart, Home, Search, SquarePen, UserRound } from 'lucide-react-native';
 import Colors from '@/src/constants/Colors';
 
 export default function TabLayout() {
+  const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -35,8 +37,15 @@ export default function TabLayout() {
         name="memo"
         options={{
           title: '',
+          headerTitle: '새로운 스레드',
           tabBarIcon: ({ color }) => <SquarePen color={color} size={24} />,
         }}
+        listeners={() => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            router.navigate('(modal)/new-thread');
+          },
+        })}
       />
 
       <Tabs.Screen
