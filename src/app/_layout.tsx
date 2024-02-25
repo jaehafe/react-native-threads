@@ -1,22 +1,21 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import * as React from 'react';
+import { Text, TouchableOpacity, useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { Text, TouchableOpacity, useColorScheme } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Bell, ChevronLeft } from 'lucide-react-native';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+import ThreadsContextProvider from '../contexts/thread-context';
+
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: '(tabs)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -25,12 +24,11 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
+  React.useEffect(() => {
     if (error) throw error;
   }, [error]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -49,21 +47,38 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(modal)/new-thread"
-          options={{
-            headerTitle: '새로운 스레드',
-            presentation: 'modal',
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => router.back()}>
-                <Text>취소</Text>
-              </TouchableOpacity>
-            ),
-          }}
-        />
-      </Stack>
+      <ThreadsContextProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+          <Stack.Screen
+            name="(modal)/new-thread"
+            options={{
+              headerTitle: '새로운 스레드',
+              presentation: 'modal',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => router.back()}>
+                  <Text>취소</Text>
+                </TouchableOpacity>
+              ),
+            }}
+          />
+
+          <Stack.Screen
+            name="thread-details"
+            options={{
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => router.back()}>
+                  <ChevronLeft color={'black'} />
+                </TouchableOpacity>
+              ),
+              headerTitle: '스레드',
+              headerRight: () => <Bell color={'black'} />,
+              presentation: 'card',
+            }}
+          />
+        </Stack>
+      </ThreadsContextProvider>
     </ThemeProvider>
   );
 }

@@ -1,11 +1,10 @@
-import { Button, StyleSheet, Text, View, useColorScheme } from 'react-native';
-import React from 'react';
-import { Stack, Tabs, useNavigation, useRouter } from 'expo-router';
+import * as React from 'react';
+import { StyleSheet, useColorScheme } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
 import { Heart, Home, Search, SquarePen, UserRound } from 'lucide-react-native';
 import Colors from '@/src/constants/Colors';
 
 export default function TabLayout() {
-  const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const router = useRouter();
 
@@ -25,7 +24,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="two"
+        name="search"
         options={{
           title: '',
           tabBarIcon: ({ color }) => <Search color={color} size={24} />,
