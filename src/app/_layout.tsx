@@ -9,6 +9,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Bell, ChevronLeft } from 'lucide-react-native';
 
 import ThreadsContextProvider from '../contexts/thread-context';
+import Splash from '../components/Splash';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -44,41 +45,48 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const router = useRouter();
   const colorScheme = useColorScheme();
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const onLoading = () => setIsLoading(false);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <ThreadsContextProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      {isLoading ? (
+        <Splash onLoading={onLoading} />
+      ) : (
+        <ThreadsContextProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          <Stack.Screen
-            name="(modal)/new-thread"
-            options={{
-              headerTitle: '새로운 스레드',
-              presentation: 'modal',
-              headerLeft: () => (
-                <TouchableOpacity onPress={() => router.back()}>
-                  <Text>취소</Text>
-                </TouchableOpacity>
-              ),
-            }}
-          />
+            <Stack.Screen
+              name="(modal)/new-thread"
+              options={{
+                headerTitle: '새로운 스레드',
+                presentation: 'modal',
+                headerLeft: () => (
+                  <TouchableOpacity onPress={() => router.back()}>
+                    <Text>취소</Text>
+                  </TouchableOpacity>
+                ),
+              }}
+            />
 
-          <Stack.Screen
-            name="thread-details"
-            options={{
-              headerLeft: () => (
-                <TouchableOpacity onPress={() => router.back()}>
-                  <ChevronLeft color={'black'} />
-                </TouchableOpacity>
-              ),
-              headerTitle: '스레드',
-              headerRight: () => <Bell color={'black'} />,
-              presentation: 'card',
-            }}
-          />
-        </Stack>
-      </ThreadsContextProvider>
+            <Stack.Screen
+              name="thread-details"
+              options={{
+                headerLeft: () => (
+                  <TouchableOpacity onPress={() => router.back()}>
+                    <ChevronLeft color={'black'} />
+                  </TouchableOpacity>
+                ),
+                headerTitle: '스레드',
+                headerRight: () => <Bell color={'black'} />,
+                presentation: 'card',
+              }}
+            />
+          </Stack>
+        </ThreadsContextProvider>
+      )}
     </ThemeProvider>
   );
 }
